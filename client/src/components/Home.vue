@@ -1,17 +1,24 @@
 <template>
   <v-container>
     <h1>Home</h1>
-    <dir v-if="$apollo.loading">Loading...</dir>
-    <ul v-else v-for="post in posts" :key="post._id">
-      <li>
-        {{post.title}}
-        {{post.imageUrl}}
-        {{post.description}}
-      </li>
-      <li>
-        {{post.likes}}
-      </li>
-    </ul>
+
+    <ApolloQuery :query="getPostsQuery">
+      <template slot-scope="{ result: { loading, error, data } }">
+        <div v-if="loading">Loading...</div>
+        <div v-else-if="error">Error! {{error.message}}</div>
+        <ul v-else v-for="post in data.getPosts" :key="post._id">
+          <li>
+            {{post.title}}
+            {{post.imageUrl}}
+            {{post.description}}
+          </li>
+          <li>
+            {{post.likes}}
+          </li>
+        </ul>
+      </template>
+    </ApolloQuery>
+
   </v-container>
 </template>
 
@@ -22,12 +29,7 @@ export default {
   name: "home",
   data() {
     return {
-      posts: []
-    };
-  },
-  apollo: {
-    getPosts: {
-      query: gql`
+      getPostsQuery: gql`
         query {
           getPosts {
             _id
@@ -38,12 +40,7 @@ export default {
           }
         }
       `,
-      result({ data, loading }) {
-        if (!loading) {
-          this.posts = data.getPosts;
-        }
-      }
-    }
+    };
   },
 };
 </script>
