@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from '@/router';
 
 import { defaultClient as apolloClient } from '@/main';
 
@@ -22,6 +23,9 @@ export default new Vuex.Store({
     },
     setUser: (state, payload) => {
       state.user = payload;
+    },
+    clearUser: state => {
+      state.user = null;
     }
   },
   actions: {
@@ -54,6 +58,8 @@ export default new Vuex.Store({
         });
     },
     signinUser: ({ commit }, payload) => {
+      // clear token to prevent errors verifying
+      localStorage.setItem('token', '');
       apolloClient
         .mutate({
           mutation: SIGNIN_USER,
@@ -65,6 +71,16 @@ export default new Vuex.Store({
         .catch(err => {
           console.error(err);
         });
+    },
+    signoutUser: async ({ commit }) => {
+      // clear user in state
+      commit('clearUser');
+      // remove token in localStorage
+      localStorage.setItem('token', '');
+      // end session
+      await apolloClient.resetStore();
+      // redirect home - kick users out of private pages
+      router.push('/');
     },
   },
   modules: {
