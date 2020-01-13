@@ -10,7 +10,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     posts: [],
-    loading: false
+    loading: false,
+    user: null
   },
   mutations: {
     setPosts: (state, payload) => {
@@ -18,6 +19,9 @@ export default new Vuex.Store({
     },
     setLoading: (state, payload) => {
       state.loading = payload;
+    },
+    setUser: (state, payload) => {
+      state.user = payload;
     }
   },
   actions: {
@@ -28,7 +32,8 @@ export default new Vuex.Store({
       })
       .then(({ data }) => {
         commit('setLoading', false);
-        console.log(data.getCurrentUser);
+        // Add user data to state
+        commit('setUser', data.getCurrentUser);
       })
       .catch(err => {
         commit('setLoading', false);
@@ -66,6 +71,7 @@ export default new Vuex.Store({
   },
   getters: {
     posts: state => state.posts,
-    loading: state => state.loading
+    loading: state => state.loading,
+    user: state => state.user
   }
 })

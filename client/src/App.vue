@@ -51,6 +51,16 @@
           ><v-icon left class="hidden-sm-only">{{ item.icon }}</v-icon
           >{{ item.title }}</v-btn
         >
+
+        <v-btn text v-if="user" to="/profile">
+          <v-icon left class="hidden-sm-only"
+            >mdi-account-circle-outline</v-icon
+          >
+          <v-badge right color="secondary">
+            <span slot="badge">1</span>
+            Profile
+          </v-badge>
+        </v-btn>
       </v-toolbar-items>
     </v-app-bar>
 
@@ -64,6 +74,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "App",
   data() {
@@ -72,19 +84,40 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["user"]),
     horizontalNavbarItems() {
-      return [
+      let items = [
         { icon: "mdi-chat-outline", title: "Posts", link: "/posts" },
         { icon: "mdi-lock-open-outline", title: "Sign In", link: "/signin" },
         { icon: "mdi-pencil", title: "Sign Up", link: "/signup" }
       ];
+      if (this.user) {
+        items = [{ icon: "mdi-chat-outline", title: "Posts", link: "/posts" }];
+      }
+      return items;
     },
     sideNavbarItems() {
-      return [
+      let items = [
         { icon: "mdi-chat-outline", title: "Posts", link: "/posts" },
         { icon: "mdi-lock-open-outline", title: "Sign In", link: "/signin" },
         { icon: "mdi-pencil", title: "Sign Up", link: "/signup" }
       ];
+      if (this.user) {
+        items = [
+          { icon: "mdi-chat-outline", title: "Posts", link: "/posts" },
+          {
+            icon: "mdi-file-star-outline",
+            title: "Add Post",
+            link: "/post/add"
+          },
+          {
+            icon: "mdi-account-circle-outline",
+            title: "Profile",
+            link: "/profile"
+          }
+        ];
+      }
+      return items;
     }
   },
   methods: {
